@@ -1,0 +1,8 @@
+body {
+    overflow-wrap: break-word;
+    margin: 5%
+}
+
+.displayText {
+    font-family: monospace;
+}
