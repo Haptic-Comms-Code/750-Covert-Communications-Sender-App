@@ -38,9 +38,12 @@ form.addEventListener("submit", async(event) => {
     // Send starting vibration, this will tell the reciever to start listening.
     displayStatus.innerHTML = "Starting..."
     try{
-        navigator.vibrate(startVibrateTime);
+        for (let i = 0; i < 8; i++){
+            navigator.vibrate(startVibrateTime);
+            await new Promise(r => setTimeout(r, startVibrateTime));
+        }
     } catch { };
-    await new Promise(r => setTimeout(r, startVibrateTime));
+    
 
     //Send the message over
     for (var i = 0; i < binaryOutput.length; i++ ){
