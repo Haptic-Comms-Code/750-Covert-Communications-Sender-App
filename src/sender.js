@@ -7,7 +7,7 @@ const form = document.getElementById("form");
 const submitButton = document.getElementById("submit")
 const stopButton = document.getElementById("stop");
 const displayStatus = document.getElementById("displayStatus");
-const startVibrateTime = 700
+const startVibrateTime = 700;
 const waitTime = 500;
 let runProcess = true;
 
