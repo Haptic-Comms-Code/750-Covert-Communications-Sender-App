@@ -1,3 +1,8 @@
+/*
+# SPDX-FileCopyrightText: 2026 Group 5
+#
+# SPDX-License-Identifier: MIT
+*/
 const form = document.getElementById("form");
 const submitButton = document.getElementById("submit")
 const stopButton = document.getElementById("stop");
