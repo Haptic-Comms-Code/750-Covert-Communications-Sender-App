@@ -29,7 +29,7 @@ function reciever(previous){
     }
 
     previous = {x: sensor.x, y: sensor.y, z: sensor.z};
-    return lastTime, previous
+    return [lastTime, previous]
 }
  
 function interval(){
@@ -40,7 +40,9 @@ function interval(){
     let lastTime = -Infinity;
 
     intervalID = setInterval(() => {
-        reciver(previous)
+        receiverValues = reciver(previous)
+        lastTime = receiverValues[0]
+        previous = receiverValues[1]
         console.log(previous.x)
         console.log(previous.y)
         console.log(previous.z)
