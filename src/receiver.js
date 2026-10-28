@@ -64,16 +64,17 @@ startButton.addEventListener("click", async(event) => {
     stopButton.disabled = false;
     startButton.disabled = true;
     try {
-        sensor = new Accelerometer({frequency: SamplesPerSecond});
+        let sensor = new Accelerometer({frequency: SamplesPerSecond});
         sensor.addEventListener("activate", () => {
-            now = performance.now();
+        now = performance.now();
             displayStatus.innerHTML = "Starting Receiver";
             interval()
         });
     } catch (error) {
-        displayStatus.innerHTML = "API not supported. Use a different browser";
-        console.error("API not supported. Use a different browser");
+        displayStatus.innerHTML = error;
+        console.error(error);
     }
+
 });
 
 
