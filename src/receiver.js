@@ -1,7 +1,7 @@
 //frontend objects
 const startButton = document.getElementById("start")
 const stopButton = document.getElementById("stop");
-const displayStatus = document.getElementById("displayStatus");
+const displayStatus = document.getElementById("displayMessage");
 
 const vibeThreshold = 1.0;
 const RECEIVE_WINDOW = 500; //2bps
@@ -10,7 +10,7 @@ let intervalID; //required to stop the interval
 
 
 
-function isVibrating(){
+function isVibrating(lastTime){
     return (performance.now() - lastTime) <= RECEIVE_WINDOW;
 }
 
@@ -20,22 +20,7 @@ function binToString(binaryOutput, message){
     return message;
 }
 
-function reciever(){
-    if (!("Accelerometer" in window)){
-        console.error("API not supported. Use a different browser");
-    }
-
-    else{
-        sensor = new Accelerometer({frequency: SamplesPerSecond}); 
-    }
-
-    let previous = null;
-    let lastTime = -Infinity;
-
-    sensor.addEventListener("activate", () => {
-        now = performance.now();
-    })
-
+function reciever(previous){
     if (previous){
         const diffrence = Math.hypot(sensor.x - previous.x, sensor.y - previous.y, sensor.z - previous.z);
         if(diffrence >= vibeThreshold){
@@ -44,12 +29,22 @@ function reciever(){
     }
 
     previous = {x: sensor.x, y: sensor.y, z: sensor.z};
-
+    return lastTime, previous
+}
+ 
+fucntion interval(){
+    
     binaryOutput = ""
     message = document.getElementById("message").value;
+    let previous = null;
+    let lastTime = -Infinity;
 
     intervalID = setInterval(() => {
-        if(isVibrating){
+        reciver(previous)
+        console.log(previous.x)
+        console.log(previous.y)
+        console.log(previous.z)
+        if(isVibrating(lastTime)){
             binaryOutput += "1";
         }
         else{
@@ -60,11 +55,22 @@ function reciever(){
             document.getElementById("displayMessage").innerHTML = message;
         }
     }, RECEIVE_WINDOW)
-    globalThis.intervalID
 
 
 }
 startButton.addEventListener("click", async(event) => {
+    if (!("Accelerometer" in window)){
+        console.error("API not supported. Use a different browser");
+    }
+
+    else{
+        sensor = new Accelerometer({frequency: SamplesPerSecond}); 
+    }
+
+    sensor.addEventListener("activate", () => {
+        now = performance.now();
+    });
+    
     stopButton.disabled = false;
     startButton.disabled = true;
     displayStatus.innerHTML = "Starting Receiver";
