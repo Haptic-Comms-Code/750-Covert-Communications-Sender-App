@@ -70,6 +70,7 @@ startButton.addEventListener("click", async(event) => {
             displayStatus.innerHTML = "Starting Receiver";
             interval()
         });
+        sensor.start()
     } catch (error) {
         displayStatus.innerHTML = error;
         console.error(error);
