@@ -61,22 +61,19 @@ function interval(){
 
 }
 startButton.addEventListener("click", async(event) => {
-    if (!("Accelerometer" in window)){
-        console.error("API not supported. Use a different browser");
-    }
-
-    else{
-        sensor = new Accelerometer({frequency: SamplesPerSecond}); 
-    }
-
-    sensor.addEventListener("activate", () => {
-        now = performance.now();
-    });
-    
     stopButton.disabled = false;
     startButton.disabled = true;
-    displayStatus.innerHTML = "Starting Receiver";
-    reciever()
+    try {
+        sensor = new Accelerometer({frequency: SamplesPerSecond});
+        sensor.addEventListener("activate", () => {
+            now = performance.now();
+            displayStatus.innerHTML = "Starting Receiver";
+            interval()
+        });
+    } catch (error) {
+        displayStatus.innerHTML = "API not supported. Use a different browser";
+        console.error("API not supported. Use a different browser");
+    }
 });
 
 
