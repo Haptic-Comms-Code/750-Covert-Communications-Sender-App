@@ -32,7 +32,7 @@ function reciever(previous){
     return lastTime, previous
 }
  
-fucntion interval(){
+function interval(){
     
     binaryOutput = ""
     message = document.getElementById("message").value;
