@@ -69,6 +69,7 @@ function interval(){
 startButton.addEventListener("click", async(event) => {
     stopButton.disabled = false;
     startButton.disabled = true;
+    displayStatus.innerHTML = "Start Button Pressed";
     try {
         let sensor = new Accelerometer({frequency: SamplesPerSecond});
         sensor.addEventListener("activate", () => {
