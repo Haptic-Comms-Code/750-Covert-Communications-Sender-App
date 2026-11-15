@@ -78,7 +78,7 @@ function interval(){
         else{
             binaryOutput += "0";
         }
-        console.log("Sensitivity: " + binaryOutput);
+        console.log("Output: " + binaryOutput);
         console.log("vibeThreshold: " + vibeThreshold);
         console.log("SPS: " + SamplesPerSecond);
         if(binaryOutput.length == 8){ //This converts, in real time, the message to chars whenever 8 bytes have been sent.
