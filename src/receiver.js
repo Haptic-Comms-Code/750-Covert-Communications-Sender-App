@@ -71,6 +71,7 @@ startButton.addEventListener("click", async(event) => {
     startButton.disabled = true;
     displayStatus.innerHTML = "Start Button Pressed";
     try {
+        displayStatus.innerHTML = "Entered try block";
         let sensor = new Accelerometer({frequency: SamplesPerSecond});
         sensor.addEventListener("activate", () => {
             displayStatus.innerHTML = "Starting performance.now";
