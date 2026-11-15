@@ -69,12 +69,10 @@ function interval(){
 startButton.addEventListener("click", async(event) => {
     stopButton.disabled = false;
     startButton.disabled = true;
-    displayStatus.innerHTML = "Start Button Pressed";
     try {
-        displayStatus.innerHTML = "Entered try block";
+        displayStatus.innerHTML = "Entered try block. If this message persists, enable the accelerometer on your phone and try again.";
         let sensor = new Accelerometer({frequency: SamplesPerSecond});
         sensor.addEventListener("activate", () => {
-            displayStatus.innerHTML = "Starting performance.now";
         	now = performance.now();
         	displayStatus.innerHTML = "Starting Receiver 1";
         	interval();
