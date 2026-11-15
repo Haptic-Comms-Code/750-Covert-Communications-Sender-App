@@ -1,18 +1,27 @@
 //frontend objects
+const form = document.getElementById("form");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const displayStatus = document.getElementById("displayMessage");
+const thresholdButton = document.getElementById("submit");
 
-const vibeThreshold = 0.0;
+let vibeThreshold = 0.1;
 const RECEIVE_WINDOW = 500; //2bps
 const SamplesPerSecond = 240; //tune up/down, higher requires more system resources
 let intervalID; //required to stop the interval
 let sensor = {x: 0.0, y: 0.0, z: 0.0};
 
+document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
+
 window.addEventListener("error", (e) => {
 	document.body.insertAdjacentHTML("afterbegin", `<pre style="color:red">${e.message}</pre>`);
 });
 
+form.addEventListener("submit", async(event) => {
+    vibeThreshold = document.getElementById("value").value;
+    console.log(vibeThreshold);
+    document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
+});
 
 function isVibrating(lastTime){
     return (performance.now() - lastTime) <= RECEIVE_WINDOW;
@@ -57,6 +66,8 @@ function interval(){
         else{
             binaryOutput += "0";
         }
+        console.log("Sensitivity: " + binaryOutput);
+        console.log("vibeThreshold: " + vibeThreshold);
         if(binaryOutput.length == 8){ //This converts, in real time, the message to chars whenever 8 bytes have been sent.
             binToString(binaryOutput, message);
             displayStatus.innerHTML = binaryOutput;
@@ -69,6 +80,7 @@ function interval(){
 startButton.addEventListener("click", async(event) => {
     stopButton.disabled = false;
     startButton.disabled = true;
+    console.log("vibeThreshold is set to: " + vibeThreshold);
     try {
         displayStatus.innerHTML = "Entered try block. If this message persists, enable the accelerometer on your phone and try again.";
         let sensor = new Accelerometer({frequency: SamplesPerSecond});
