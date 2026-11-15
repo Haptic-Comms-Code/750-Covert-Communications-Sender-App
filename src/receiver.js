@@ -7,15 +7,16 @@ const thresholdButton = document.getElementById("submit");
 
 let vibeThreshold = 0.1;
 const RECEIVE_WINDOW = 500; //2bps
-let SamplesPerSecond = 240; //tune up/down, higher requires more system resources
-let intervalID; //required to stop the interval
-let sensor = {x: 0.0, y: 0.0, z: 0.0};
+let SamplesPerSecond = 240;
+let intervalID;
+let accelerometer = null;   // created when Start is clicked
+let message = "";           // decoded text so far
 
 document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
 document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
 
 window.addEventListener("error", (e) => {
-	document.body.insertAdjacentHTML("afterbegin", `<pre style="color:red">${e.message}</pre>`);
+    document.body.insertAdjacentHTML("afterbegin", `<pre style="color:red">${e.message}</pre>`);
 });
 
 function stopReceiver(){
@@ -23,14 +24,14 @@ function stopReceiver(){
     stopButton.disabled = true;
     startButton.disabled = false;
     clearInterval(intervalID);
+    if (accelerometer) accelerometer.stop();
 }
 
-form.addEventListener("submit", async(event) => {
-    vibeThreshold = document.getElementById("sensitivity").value;
-    SamplesPerSecond = document.getElementById("sps").value;
-    console.log("vibeThreshold is now " + vibeThreshold);
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    vibeThreshold = parseFloat(document.getElementById("sensitivity").value);
+    SamplesPerSecond = parseInt(document.getElementById("sps").value);
     document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
-    console.log("SamplesPerSecond is now " + SamplesPerSecond);
     document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
     stopReceiver();
 });
@@ -40,78 +41,72 @@ function isVibrating(lastTime){
 }
 
 function binToString(binaryOutput, message){
-    const code = parseInt(binaryOutput,2);
-    message += String.fromCharCode(code);
-    return message;
+    const code = parseInt(binaryOutput, 2);
+    return message + String.fromCharCode(code);
 }
 
 function receiver(previous, lastTime){
     if (previous){
-        const diffrence = Math.hypot(sensor.x - previous.x, sensor.y - previous.y, sensor.z - previous.z);
-        if(diffrence >= vibeThreshold){
+        const difference = Math.hypot(
+            accelerometer.x - previous.x,
+            accelerometer.y - previous.y,
+            accelerometer.z - previous.z
+        );
+        if (difference >= vibeThreshold){
             lastTime = performance.now();
-        }   
+        }
     }
-
-    previous = {x: sensor.x, y: sensor.y, z: sensor.z};
+    previous = {x: accelerometer.x, y: accelerometer.y, z: accelerometer.z};
     return [lastTime, previous];
 }
- 
+
 function interval(){
-    
-    binaryOutput = "";
-    message = document.getElementById("displayMessage").value;
-    let previous = {x: 0.0, y: 0.0, z: 0.0};
+    let binaryOutput = "";
+    message = "";
+    let previous = null;
     let lastTime = -Infinity;
-    displayStatus.innerHTML = "Check 1";
     let ticks = 0;
+
     intervalID = setInterval(() => {
-        receiverValues = receiver(previous, lastTime);
-	
+        const receiverValues = receiver(previous, lastTime);
         lastTime = receiverValues[0];
         previous = receiverValues[1];
-	displayStatus.innerHTML = ticks;
-	ticks += 1;
-        if(isVibrating(lastTime)){
-            binaryOutput += "1";
-        }
-        else{
-            binaryOutput += "0";
-        }
+
+        displayStatus.innerHTML = ticks++;
+        binaryOutput += isVibrating(lastTime) ? "1" : "0";
+
         console.log("Output: " + binaryOutput);
-        console.log("vibeThreshold: " + vibeThreshold);
-        console.log("SPS: " + SamplesPerSecond);
-        console.log("Sensor (X Y Z):" + sensor.x + " " + sensor.y + "" + sensor .z);
-        if(binaryOutput.length == 8){ //This converts, in real time, the message to chars whenever 8 bytes have been sent.
-            binToString(binaryOutput, message);
+        console.log("Sensor (X Y Z): " + accelerometer.x + " " + accelerometer.y + " " + accelerometer.z);
+
+        if (binaryOutput.length == 8){
+            message = binToString(binaryOutput, message);
+            console.log("Message so far: " + message);
             displayStatus.innerHTML = binaryOutput;
             binaryOutput = "";
-	}
-    }, RECEIVE_WINDOW)
-
-
+        }
+    }, RECEIVE_WINDOW);
 }
-startButton.addEventListener("click", async(event) => {
+
+startButton.addEventListener("click", () => {
     stopButton.disabled = false;
     startButton.disabled = true;
-    console.log("vibeThreshold is set to: " + vibeThreshold);
-    console.log("SPS is set to: " + SamplesPerSecond);
     try {
         displayStatus.innerHTML = "Entered try block. If this message persists, enable the accelerometer on your phone and try again.";
-        let sensor = new Accelerometer({frequency: SamplesPerSecond});
-        sensor.addEventListener("activate", () => {
-        	now = performance.now();
-        	displayStatus.innerHTML = "Starting Receiver 1";
-        	interval();
+        accelerometer = new Accelerometer({frequency: SamplesPerSecond});
+        accelerometer.addEventListener("activate", () => {
+            displayStatus.innerHTML = "Starting Receiver 1";
+            interval();
         });
-        sensor.start();
+        accelerometer.addEventListener("error", (e) => {
+            displayStatus.innerHTML = e.error.name + ": " + e.error.message;
+        });
+        accelerometer.start();
     } catch (error) {
         displayStatus.innerHTML = error;
         console.error(error);
+        startButton.disabled = false;
+        stopButton.disabled = true;
     }
-
 });
 
-stopButton.addEventListener("click", async(event) => {
-    stopReceiver();
-});
+stopButton.addEventListener("click", stopReceiver);
