@@ -5,7 +5,7 @@ const displayStatus = document.getElementById("displayMessage");
 
 const vibeThreshold = 0.000001;
 const RECEIVE_WINDOW = 500; //2bps
-const SamplesPerSecond = 60; //tune up/down, higher requires more system resources
+const SamplesPerSecond = 240; //tune up/down, higher requires more system resources
 let intervalID; //required to stop the interval
 let sensor = {x: 0.0, y: 0.0, z: 0.0};
 
