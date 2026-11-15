@@ -81,6 +81,7 @@ function interval(){
         console.log("Output: " + binaryOutput);
         console.log("vibeThreshold: " + vibeThreshold);
         console.log("SPS: " + SamplesPerSecond);
+        console.log("Sensor: " + sensor);
         if(binaryOutput.length == 8){ //This converts, in real time, the message to chars whenever 8 bytes have been sent.
             binToString(binaryOutput, message);
             displayStatus.innerHTML = binaryOutput;
