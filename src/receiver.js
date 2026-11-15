@@ -7,20 +7,25 @@ const thresholdButton = document.getElementById("submit");
 
 let vibeThreshold = 0.1;
 const RECEIVE_WINDOW = 500; //2bps
-const SamplesPerSecond = 240; //tune up/down, higher requires more system resources
+let SamplesPerSecond = 240; //tune up/down, higher requires more system resources
 let intervalID; //required to stop the interval
 let sensor = {x: 0.0, y: 0.0, z: 0.0};
 
 document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
+document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
 
 window.addEventListener("error", (e) => {
 	document.body.insertAdjacentHTML("afterbegin", `<pre style="color:red">${e.message}</pre>`);
 });
 
 form.addEventListener("submit", async(event) => {
-    vibeThreshold = document.getElementById("value").value;
-    console.log(vibeThreshold);
+    vibeThreshold = document.getElementById("sensitivity").value;
+    SamplesPerSecond = document.getElementById("sps").value;
+    console.log("vibeThreshold is now " + vibeThreshold);
     document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
+    console.log("SamplesPerSecond is now " + vibeThreshold);
+    document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
+    stopReceiver();
 });
 
 function isVibrating(lastTime){
@@ -68,6 +73,7 @@ function interval(){
         }
         console.log("Sensitivity: " + binaryOutput);
         console.log("vibeThreshold: " + vibeThreshold);
+        console.log("SPS: " + SamplesPerSecond);
         if(binaryOutput.length == 8){ //This converts, in real time, the message to chars whenever 8 bytes have been sent.
             binToString(binaryOutput, message);
             displayStatus.innerHTML = binaryOutput;
@@ -81,6 +87,7 @@ startButton.addEventListener("click", async(event) => {
     stopButton.disabled = false;
     startButton.disabled = true;
     console.log("vibeThreshold is set to: " + vibeThreshold);
+    console.log("SPS is set to: " + SamplesPerSecond);
     try {
         displayStatus.innerHTML = "Entered try block. If this message persists, enable the accelerometer on your phone and try again.";
         let sensor = new Accelerometer({frequency: SamplesPerSecond});
@@ -97,11 +104,13 @@ startButton.addEventListener("click", async(event) => {
 
 });
 
-
-stopButton.addEventListener("click", async(event) => {
-    displayStatus.innerHTML = "Stopping Receiver";
+function stopReceiver(){
+        displayStatus.innerHTML = "Stopping Receiver";
     stopButton.disabled = true;
     startButton.disabled = false;
     clearInterval(intervalID);
+}
 
+stopButton.addEventListener("click", async(event) => {
+    stopReceiver();
 });
