@@ -18,6 +18,13 @@ window.addEventListener("error", (e) => {
 	document.body.insertAdjacentHTML("afterbegin", `<pre style="color:red">${e.message}</pre>`);
 });
 
+function stopReceiver(){
+    displayStatus.innerHTML = "Stopping Receiver";
+    stopButton.disabled = true;
+    startButton.disabled = false;
+    clearInterval(intervalID);
+}
+
 form.addEventListener("submit", async(event) => {
     vibeThreshold = document.getElementById("sensitivity").value;
     SamplesPerSecond = document.getElementById("sps").value;
@@ -103,13 +110,6 @@ startButton.addEventListener("click", async(event) => {
     }
 
 });
-
-function stopReceiver(){
-        displayStatus.innerHTML = "Stopping Receiver";
-    stopButton.disabled = true;
-    startButton.disabled = false;
-    clearInterval(intervalID);
-}
 
 stopButton.addEventListener("click", async(event) => {
     stopReceiver();
