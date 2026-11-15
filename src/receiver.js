@@ -3,7 +3,7 @@ const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const displayStatus = document.getElementById("displayMessage");
 
-const vibeThreshold = 0.000001;
+const vibeThreshold = 0.0;
 const RECEIVE_WINDOW = 500; //2bps
 const SamplesPerSecond = 240; //tune up/down, higher requires more system resources
 let intervalID; //required to stop the interval
