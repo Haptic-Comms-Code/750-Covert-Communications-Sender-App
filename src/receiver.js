@@ -30,7 +30,7 @@ form.addEventListener("submit", async(event) => {
     SamplesPerSecond = document.getElementById("sps").value;
     console.log("vibeThreshold is now " + vibeThreshold);
     document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
-    console.log("SamplesPerSecond is now " + vibeThreshold);
+    console.log("SamplesPerSecond is now " + SamplesPerSecond);
     document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
     stopReceiver();
 });
