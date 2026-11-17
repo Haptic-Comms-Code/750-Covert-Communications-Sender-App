@@ -11,6 +11,7 @@ let SamplesPerSecond = 240;
 let intervalID;
 let accelerometer = null;   // created when Start is clicked
 let message = "";           // decoded text so far
+let baseline = {x: 0, y: 0.2, z: 9.8};
 
 document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
 document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
@@ -49,9 +50,9 @@ function binToString(binaryOutput, message){
 function receiver(previous, lastTime){
     if (previous){
         const difference = Math.hypot(
-            accelerometer.x - previous.x,
-            accelerometer.y - previous.y,
-            accelerometer.z - previous.z
+            accelerometer.x - baseline.x,
+            accelerometer.y - baseline.y,
+            accelerometer.z - baseline.z
         );
         if (difference >= vibeThreshold){
             console.log("Time Updated" + performance.now())
