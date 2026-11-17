@@ -53,6 +53,7 @@ function receiver(previous, lastTime){
             accelerometer.z - previous.z
         );
         if (difference >= vibeThreshold){
+            console.log("Time Updated" + performance.now())
             lastTime = performance.now();
         }
     }
