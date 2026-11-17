@@ -85,7 +85,7 @@ function interval(){
         if (binaryOutput.length == 8){
             message = binToString(binaryOutput, message);
             console.log("Message so far: " + message);
-            displayStatus.innerHTML = binaryOutput;
+            displayMessage.innerHTML = binaryOutput;
             binaryOutput = "";
         }
     }, RECEIVE_WINDOW);
