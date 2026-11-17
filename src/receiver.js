@@ -37,6 +37,7 @@ form.addEventListener("submit", (event) => {
 });
 
 function isVibrating(lastTime){
+    console.log(performance.now() - lastTime)
     return (performance.now() - lastTime) <= RECEIVE_WINDOW;
 }
 
