@@ -40,7 +40,7 @@ form.addEventListener("submit", (event) => {
 
 function isVibrating(lastTime){
     console.log(performance.now() - lastTime)
-    return (performance.now() - lastTime) <= 400;
+    return (performance.now() - lastTime) <= CHECK_WINDOW;
 }
 
 function binToString(binaryOutput, message){
