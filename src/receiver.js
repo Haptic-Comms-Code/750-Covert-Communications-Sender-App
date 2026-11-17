@@ -7,6 +7,7 @@ const thresholdButton = document.getElementById("submit");
 
 let vibeThreshold = 0.1;
 const RECEIVE_WINDOW = 500; //2bps
+const CHECK_WINDOW = RECEIVE_WINDOW - 100
 let SamplesPerSecond = 240;
 let intervalID;
 let accelerometer = null;   // created when Start is clicked
