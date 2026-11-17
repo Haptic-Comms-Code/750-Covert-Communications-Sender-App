@@ -3,14 +3,16 @@ const form = document.getElementById("form");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const displayStatus = document.getElementById("displayMessage");
-const thresholdButton = document.getElementById("submit");
 
 let vibeThreshold = 0.1;
 const RECEIVE_WINDOW = 500; //2bps
 let SamplesPerSecond = 240;
-let intervalID;
-let accelerometer = null;   // created when Start is clicked
-let message = "";           // decoded text so far
+let intervalID = null;
+let accelerometer = null;
+
+let vibratedThisWindow = false; // latch: true once a vibration is seen this window
+let prevSample = null;
+let message = "";
 
 document.getElementById("displaySensitivity").innerHTML = vibeThreshold;
 document.getElementById("displaySPS").innerHTML = SamplesPerSecond;
@@ -24,6 +26,7 @@ function stopReceiver(){
     stopButton.disabled = true;
     startButton.disabled = false;
     clearInterval(intervalID);
+    intervalID = null;
     if (accelerometer) accelerometer.stop();
 }
 
@@ -36,49 +39,43 @@ form.addEventListener("submit", (event) => {
     stopReceiver();
 });
 
-function isVibrating(lastTime){
-    console.log(performance.now() - lastTime)
-    return (performance.now() - lastTime) <= RECEIVE_WINDOW;
-}
-
 function binToString(binaryOutput, message){
     const code = parseInt(binaryOutput, 2);
     return message + String.fromCharCode(code);
 }
 
-function receiver(previous, lastTime){
-    if (previous){
+// Runs on EVERY sensor sample (~SamplesPerSecond times/sec)
+function onReading(){
+    if (vibratedThisWindow) return;      // already got one this window: ignore the rest
+
+    if (prevSample){
         const difference = Math.hypot(
-            accelerometer.x - previous.x,
-            accelerometer.y - previous.y,
-            accelerometer.z - previous.z
+            accelerometer.x - prevSample.x,
+            accelerometer.y - prevSample.y,
+            accelerometer.z - prevSample.z
         );
         if (difference >= vibeThreshold){
-            console.log("Time Updated" + performance.now())
-            lastTime = performance.now();
+            vibratedThisWindow = true;   // latch
         }
     }
-    previous = {x: accelerometer.x, y: accelerometer.y, z: accelerometer.z};
-    return [lastTime, previous];
+    prevSample = {x: accelerometer.x, y: accelerometer.y, z: accelerometer.z};
 }
 
 function interval(){
+    if (intervalID !== null) return;     // never run two intervals at once
+
     let binaryOutput = "";
     message = "";
-    let previous = null;
-    let lastTime = -Infinity;
+    vibratedThisWindow = false;
+    prevSample = null;
     let ticks = 0;
 
     intervalID = setInterval(() => {
-        const receiverValues = receiver(previous, lastTime);
-        lastTime = receiverValues[0];
-        previous = receiverValues[1];
+        binaryOutput += vibratedThisWindow ? "1" : "0";
+        vibratedThisWindow = false;      // open the next window
 
         displayStatus.innerHTML = ticks++;
-        binaryOutput += isVibrating(lastTime) ? "1" : "0";
-
         console.log("Output: " + binaryOutput);
-        console.log("Sensor (X Y Z): " + accelerometer.x + " " + accelerometer.y + " " + accelerometer.z);
 
         if (binaryOutput.length == 8){
             message = binToString(binaryOutput, message);
@@ -95,11 +92,11 @@ startButton.addEventListener("click", () => {
     try {
         displayStatus.innerHTML = "Entered try block. If this message persists, enable the accelerometer on your phone and try again.";
         accelerometer = new Accelerometer({frequency: SamplesPerSecond});
+        accelerometer.addEventListener("reading", onReading);
         accelerometer.addEventListener("activate", () => {
-            displayStatus.innerHTML = "Starting Receiver 1";
+            displayStatus.innerHTML = "Starting Receiver";
             interval();
-            console.log("interval() called, existing intervalID:", intervalID);
-        });
+        }, {once: true});
         accelerometer.addEventListener("error", (e) => {
             displayStatus.innerHTML = e.error.name + ": " + e.error.message;
         });
