@@ -2,7 +2,8 @@
 const form = document.getElementById("form");
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
-const displayStatus = document.getElementById("displayMessage");
+const displayStatus = document.getElementById("displayStatus");
+const displayMessage = document.getElementById("displayMessage");
 const thresholdButton = document.getElementById("submit");
 
 let vibeThreshold = 0.1;
