@@ -8,7 +8,7 @@ const submitButton = document.getElementById("submit")
 const stopButton = document.getElementById("stop");
 const displayStatus = document.getElementById("displayStatus");
 const startVibrateTime = 0;
-const waitTime = 500;
+const waitTime = 1000;
 let runProcess = true;
 
 stopButton.disabled = true;
