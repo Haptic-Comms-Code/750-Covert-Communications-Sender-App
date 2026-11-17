@@ -98,6 +98,7 @@ startButton.addEventListener("click", () => {
         accelerometer.addEventListener("activate", () => {
             displayStatus.innerHTML = "Starting Receiver 1";
             interval();
+            console.log("interval() called, existing intervalID:", intervalID);
         });
         accelerometer.addEventListener("error", (e) => {
             displayStatus.innerHTML = e.error.name + ": " + e.error.message;
