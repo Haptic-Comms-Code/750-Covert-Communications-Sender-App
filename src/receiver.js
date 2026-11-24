@@ -79,12 +79,12 @@ function interval(){
         previous = receiverValues[1];
 
         // ignore the very first tick, as it always reports 0.
-        if (ticks = 0){
+        if (ticks == 0){
             displayStatus.innerHTML = "Starting...";
         } else {
             displayStatus.innerHTML = ticks;
         }
-        ticks++
+        ticks += 1;
 
         binaryOutput += isVibrating(lastTime) ? "1" : "0";
 
