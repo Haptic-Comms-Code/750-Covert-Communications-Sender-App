@@ -90,7 +90,7 @@ function interval(){
         // before we start collecting information data.
         // Discard anything that is not a series of 8 vibrations.
         if (detectingStartMessage == true){
-            if (!vibrationDetected == 1){
+            if (binaryOutput.includes("0") == true){
                 binaryOutput = "";
             } 
             if (binaryOutput == "11111111"){
