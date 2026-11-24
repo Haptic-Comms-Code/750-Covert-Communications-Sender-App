@@ -71,6 +71,8 @@ function interval(){
     let previous = null;
     let lastTime = -Infinity;
     let ticks = 0;
+    let detectingStartMessage = true;
+    let vibrationDetected;
 
     intervalID = setInterval(() => {
         const receiverValues = receiver(previous, lastTime);
@@ -78,17 +80,31 @@ function interval(){
         previous = receiverValues[1];
 
         displayStatus.innerHTML = ticks++;
-        binaryOutput += isVibrating(lastTime) ? "1" : "0";
+        vibrationDetected = isVibrating(lastTime) ? "1" : "0";
+        binaryOutput += vibrationDetected;
 
         console.log("Output: " + binaryOutput);
         console.log("Sensor (X Y Z): " + accelerometer.x + " " + accelerometer.y + " " + accelerometer.z);
 
-        if (binaryOutput.length == 8){
-            message = binToString(binaryOutput, message);
-            console.log("Message so far: " + message);
-            displayStatus.innerHTML = binaryOutput;
-            displayMessage.innerHTML = message;
-            binaryOutput = "";
+        // We wait for a series of 8 vibrations
+        // ("11111111") before we start collecting information data
+        // discard anything that is not a series of 8 vibrations
+        if (detectingStartMessage == true){
+            if (!detectVibrations == 1){
+                binaryOutput = "";
+            } 
+            if (binaryOutput == "11111111"){
+                detectingStartMessage = false;
+                binaryOutput = "";
+            }
+        } else {
+            if (binaryOutput.length == 8){
+                message = binToString(binaryOutput, message);
+                console.log("Message so far: " + message);
+                displayStatus.innerHTML = binaryOutput;
+                displayMessage.innerHTML = message;
+                binaryOutput = "";
+            }
         }
     }, RECEIVE_WINDOW);
 }
