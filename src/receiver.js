@@ -72,7 +72,6 @@ function interval(){
     let lastTime = -Infinity;
     let ticks = 0;
     let detectingStartMessage = true;
-    let vibrationDetected;
 
     intervalID = setInterval(() => {
         const receiverValues = receiver(previous, lastTime);
@@ -80,8 +79,7 @@ function interval(){
         previous = receiverValues[1];
 
         displayStatus.innerHTML = ticks++;
-        vibrationDetected = isVibrating(lastTime) ? "1" : "0";
-        binaryOutput += vibrationDetected;
+        binaryOutput += isVibrating(lastTime) ? "1" : "0";
 
         console.log("Output: " + binaryOutput);
         console.log("Sensor (X Y Z): " + accelerometer.x + " " + accelerometer.y + " " + accelerometer.z);
