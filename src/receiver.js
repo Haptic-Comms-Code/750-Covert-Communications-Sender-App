@@ -86,9 +86,9 @@ function interval(){
         console.log("Output: " + binaryOutput);
         console.log("Sensor (X Y Z): " + accelerometer.x + " " + accelerometer.y + " " + accelerometer.z);
 
-        // We wait for a series of 8 vibrations
-        // ("11111111") before we start collecting information data
-        // discard anything that is not a series of 8 vibrations
+        // We wait for a series of 8 vibrations ("11111111")
+        // before we start collecting information data.
+        // Discard anything that is not a series of 8 vibrations.
         if (detectingStartMessage == true){
             if (!vibrationDetected == 1){
                 binaryOutput = "";
